@@ -1,5 +1,5 @@
 language: java
-script: make package
+script: make release
 before_script:
   - export VERSION=`grep log4jplugin.version plugin.properties | cut -d'=' -f2`
 cache:
@@ -9,6 +9,6 @@ deploy:
   provider: releases
   api_key:
     secure: PBmuG0tqMdgx7wihSh37BWg0JBNbAbj0F1aHsAOsUR6NRQV3Wt8s1V0ocR5Xrt0jJ2BGD2K4IYEu+AE05FSKijzst2K3lWJENN2KuFnwLv9W0LQfcv7MaM18ocSaGyFV83zErKCQbR4VjW8LOXoOs7lLzAll78wvoWPw/446IVBeC1USo6fuO4ojh3/culqzNUKZnnlL0EjalW0h6P0q13D5g38JL5RdTfOpTF/ViwsGswTLtHxn4m3remxmUmBoYytnnM/LCLhT1AHUI9j7aUpIU8W6JZXTMjQf/RvcHT57JByktzipz9RAkIQHfCZLKQI/FTrNmOVFQSgK0W74KXmyIPnQJQTxBKzacjXt8EW6ZflilYsmZJJv5oTrVLuUMyzCHSafTK3vo35vZELLK+PzxG4FYeqZqO3XTHR8feCoyoRThnbRazTy/dMu1cYxrXNzZnJvBkQgBH6eu3LpqrylXM3wAKBP7YG6rXnPWUj9VnnUEvaQ8t3UJQS8p23o2jbZ9S8CQuxx/EVRouIgJe5chNESGiFVz0ZirNYQApMJjXmY9edUUE0JnR0dYZ92Dvuevase8+2/7ZaF4nAvqIW9bI/n61nnBFaHgAyzz4KbJ79+dLX+AjIZpxzK+TbQ1bQVa8zSlO4V8EouZ6AaSXYvYw3oT4GlxRnfc+WiyiI=
-  file: target/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar
+  file: releases/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar
   on:
     repo: wywygmbh/log4j-plugin-fluency
