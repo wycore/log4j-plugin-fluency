@@ -12,7 +12,7 @@ This is a thin wrapper taking Log4j log events, adding some metadata and passing
 * fluentd forward protocol
 * all the benefits from [fluency](https://github.com/komamitsu/fluency)
 
-![](screenshot.png)
+<img src="screenshot.png" width="600">
 
 ## Install
 
