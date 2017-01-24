@@ -2,6 +2,10 @@ language: java
 script: make release
 before_script:
   - export VERSION=`grep log4jplugin.version plugin.properties | cut -d'=' -f2`
+before_deploy:
+  - find target
+  - find releases
+
 cache:
   directories:
   - "$HOME/.m2"
