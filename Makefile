@@ -16,11 +16,11 @@ clean:
 	-rm -rf target/*
 	-rm -rf release/*
 
-release:
+release: target/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar
 	-mkdir release
 	cp target/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar release/
 
-deploy:
+deploy: target/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar
 	mvn clean deploy
 
 .PHONY: package clean release deploy
