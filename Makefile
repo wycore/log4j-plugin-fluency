@@ -1,4 +1,4 @@
-VERSION?=$(shell grep log4jplugin.version plugin.properties | cut -d'=' -f2)
+VERSION?=$(shell grep '<version' pom.xml | cut -f2 -d">"| cut -f1 -d"<" | head -n 1)
 
 help:
 	@echo "usage: make TARGET"
@@ -20,4 +20,7 @@ release:
 	-mkdir release
 	cp target/log4j-plugin-fluency-${VERSION}-jar-with-dependencies.jar release/
 
-.PHONY: package clean release
+deploy:
+	mvn clean deploy
+
+.PHONY: package clean release deploy
