@@ -16,9 +16,15 @@ This is a thin wrapper taking Log4j log events, adding some metadata and passing
 
 ## Install
 
-Place the `.jar` in your classpath
+Place the `.jar` in your classpath or using maven:
 
-TODO: add maven and gradle
+```xml
+<dependency>
+  <groupId>com.wywy</groupId>
+  <artifactId>log4j-plugin-fluency</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
  
 ## Usage
 
