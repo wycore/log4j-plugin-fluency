@@ -1,5 +1,6 @@
 language: java
-script: make release
+install: /bin/true
+script: make package release
 before_script:
   - export VERSION=`grep log4jplugin.version plugin.properties | cut -d'=' -f2`
 cache:
