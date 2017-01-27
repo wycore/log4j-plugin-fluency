@@ -22,7 +22,7 @@ Place the `.jar` in your classpath or using maven:
 <dependency>
   <groupId>com.wywy</groupId>
   <artifactId>log4j-plugin-fluency</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
  
