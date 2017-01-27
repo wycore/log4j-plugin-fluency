@@ -32,7 +32,11 @@ Place the `.jar` in your classpath or using maven:
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration packages="com.wywy.log4j.appender">
     <Appenders>
-        <Fluency name="fluency" tag="yourTag" application="yourApplication" />
+        <Fluency name="fluency" tag="yourTag">
+            <!-- you can add as may as you like (or none at all) -->
+            <StaticField name="application">yourApplication</StaticField>
+            <StaticField name="someOtherField">some value</StaticField>
+        </Fluency>
     </Appenders>
     <Loggers>
         <root level="info"> <!-- We log everything -->
@@ -49,10 +53,6 @@ Place the `.jar` in your classpath or using maven:
 `tag`
 
   **required** - tag to identify messages, can be used in fluentd for message manipulation
-    
-`application`
-
-  optional - additional message field to append. useful if you have a bunch of applications and want to tell messages apart
 
 ## Internals
 
