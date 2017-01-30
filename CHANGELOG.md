@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+* switch to `StatusLogger` for internal logging
+
 ## 1.1.0
 * add generic `<StaticField>` configuration
     * deprecates `application=""` attribute (it still works, but please migrate)
