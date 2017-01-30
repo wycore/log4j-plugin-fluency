@@ -9,8 +9,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.pattern.NameAbbreviator;
 import org.apache.logging.log4j.core.util.Booleans;
+import org.apache.logging.log4j.status.StatusLogger;
 import org.komamitsu.fluency.Fluency;
-import org.slf4j.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Plugin(name="Fluency", category="Core", elementType="appender", printObject=true)
 public final class FluencyAppender extends AbstractAppender {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(FluencyAppender.class);
+    private static final StatusLogger LOG = StatusLogger.getLogger();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private final NameAbbreviator abbr = NameAbbreviator.getAbbreviator("1.");
 
@@ -51,7 +51,7 @@ public final class FluencyAppender extends AbstractAppender {
         //   - Max wait until all buffers are flushed is 10 seconds (by default)
         //   - Max wait until the flusher is terminated is 10 seconds (by default)
         try {
-            fluency = Fluency.defaultFluency();
+            this.fluency = Fluency.defaultFluency();
             LOG.info("FluencyAppender initialized");
         } catch (IOException e) {
             LOG.error(e.getMessage());
@@ -145,11 +145,11 @@ public final class FluencyAppender extends AbstractAppender {
         // this is just a workaround due to the lack of support
         m.put("@timestamp", format.format(eventTime));
 
-        if (fluency != null) {
+        if (this.fluency != null) {
             try {
                 // the tag is required for further processing within fluentd,
                 // otherwise we would have no way to manipulate messages in transit
-                fluency.emit((String) parameters.get("tag"), logEvent.getTimeMillis(), m);
+                this.fluency.emit((String) parameters.get("tag"), logEvent.getTimeMillis(), m);
             } catch (IOException e) {
                 LOG.error(e.getMessage());
             }
