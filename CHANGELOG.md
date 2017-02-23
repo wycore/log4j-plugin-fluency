@@ -1,5 +1,11 @@
 # Changelog
 
+## unreleased
+
+### Features
+
+* [[#1](https://github.com/wywygmbh/log4j-plugin-fluency/pull/1)] add support for PatternLayout
+
 ## 1.1.1
 * switch to `StatusLogger` for internal logging
 
