@@ -103,7 +103,8 @@ public final class FluencyAppender extends AbstractAppender {
     public void append(LogEvent logEvent) {
         String level = logEvent.getLevel().name();
         String loggerName = logEvent.getLoggerName();
-        String message = logEvent.getMessage().getFormattedMessage();
+        String message = (this.getLayout() == null) ? logEvent.getMessage().getFormattedMessage() :
+                new String(this.getLayout().toByteArray(logEvent));
         Date eventTime = new Date(logEvent.getTimeMillis());
 
         Map<String, Object> m = new HashMap<>();
