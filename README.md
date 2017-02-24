@@ -33,7 +33,8 @@ Place the `.jar` in your classpath or using maven:
 <Configuration packages="com.wywy.log4j.appender">
     <Appenders>
         <Fluency name="fluency" tag="yourTag">
-            <!-- you can add as may as you like (or none at all) -->
+            <!-- all settings are optional, see defaultFluency() for default values -->
+            <!-- you can add as may fields as you like (or none at all) -->
             <StaticField name="application">yourApplication</StaticField>
             <StaticField name="someOtherField">some value</StaticField>
             <Server host="primary-node" port="24224"/>

@@ -42,17 +42,6 @@ public final class FluencyAppender extends AbstractAppender {
         this.parameters = parameters;
         this.staticFields = staticFields;
 
-        // Single Fluentd(localhost:24224 by default)
-        //   - TCP heartbeat (by default)
-        //   - Asynchronous flush (by default)
-        //   - Without ack response (by default)
-        //   - Flush interval is 600ms (by default)
-        //   - Initial chunk buffer size is 1MB (by default)
-        //   - Threshold chunk buffer size to flush is 4MB (by default)
-        //   - Max total buffer size is 16MB (by default)
-        //   - Max retry of sending events is 8 (by default)
-        //   - Max wait until all buffers are flushed is 10 seconds (by default)
-        //   - Max wait until the flusher is terminated is 10 seconds (by default)
         try {
             this.fluency = makeFluency(servers, fluencyConfig);
             LOG.info("FluencyAppender initialized");
@@ -105,6 +94,18 @@ public final class FluencyAppender extends AbstractAppender {
                 layout, ignoreExceptions);
     }
 
+    // These are the defaults, it no configuration is given:
+    // Single Fluentd(localhost:24224 by default)
+    //   - TCP heartbeat (by default)
+    //   - Asynchronous flush (by default)
+    //   - Without ack response (by default)
+    //   - Flush interval is 600ms (by default)
+    //   - Initial chunk buffer size is 1MB (by default)
+    //   - Threshold chunk buffer size to flush is 4MB (by default)
+    //   - Max total buffer size is 16MB (by default)
+    //   - Max retry of sending events is 8 (by default)
+    //   - Max wait until all buffers are flushed is 60 seconds (by default)
+    //   - Max wait until the flusher is terminated is 60 seconds (by default)
     static Fluency makeFluency(Server[] servers, FluencyConfig config) throws IOException {
         if (servers.length == 0 && config == null) {
             return Fluency.defaultFluency();
