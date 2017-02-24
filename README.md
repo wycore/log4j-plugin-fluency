@@ -25,7 +25,7 @@ Place the `.jar` in your classpath or using maven:
   <version>1.2.0</version>
 </dependency>
 ```
- 
+
 ## Usage
 
 ```xml
@@ -36,6 +36,18 @@ Place the `.jar` in your classpath or using maven:
             <!-- you can add as may as you like (or none at all) -->
             <StaticField name="application">yourApplication</StaticField>
             <StaticField name="someOtherField">some value</StaticField>
+            <Server host="primary-node" port="24224"/>
+            <Server host="secondary-node" port="24224"/>
+            <FluencyConfig
+              ackResponseMode="true"
+              fileBackupDir="/tmp/fluency"
+              bufferChunkInitialSize="4194304"
+              bufferChunkRetentionSize="16777216"
+              maxBufferSize="268435456"
+              waitUntilBufferFlushed="30"
+              waitUntilFlusherTerminated="40"
+              flushIntervalMillis="200"
+              senderMaxRetryCount="12" />
         </Fluency>
     </Appenders>
     <Loggers>
@@ -59,7 +71,7 @@ Place the `.jar` in your classpath or using maven:
 The appender gets initialized by log4j and creates a new `Fluency.defaultFluency();`.
 
 All log messages get aggregated with some additional fields and handed over to fluency.
- 
+
 fluency will forward the messages to a fluentd running on localhost.
 
 ## License

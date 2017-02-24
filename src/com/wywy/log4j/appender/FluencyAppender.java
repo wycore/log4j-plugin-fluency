@@ -14,9 +14,12 @@ import org.komamitsu.fluency.Fluency;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Plugin(name="Fluency", category="Core", elementType="appender", printObject=true)
@@ -31,8 +34,8 @@ public final class FluencyAppender extends AbstractAppender {
     private Map<String, String> staticFields;
 
     private FluencyAppender(final String name, final Map<String, Object> parameters, final Map<String, String> staticFields,
-                            final Filter filter, final Layout<? extends Serializable> layout,
-                            final boolean ignoreExceptions) {
+                            final Server[] servers, final FluencyConfig fluencyConfig, final Filter filter,
+                            final Layout<? extends Serializable> layout, final boolean ignoreExceptions) {
 
         super(name, filter, layout, ignoreExceptions);
 
@@ -51,7 +54,7 @@ public final class FluencyAppender extends AbstractAppender {
         //   - Max wait until all buffers are flushed is 10 seconds (by default)
         //   - Max wait until the flusher is terminated is 10 seconds (by default)
         try {
-            this.fluency = Fluency.defaultFluency();
+            this.fluency = makeFluency(servers, fluencyConfig);
             LOG.info("FluencyAppender initialized");
         } catch (IOException e) {
             LOG.error(e.getMessage());
@@ -64,6 +67,8 @@ public final class FluencyAppender extends AbstractAppender {
                                                  @PluginAttribute("application") final String application,
                                                  @PluginAttribute("ignoreExceptions") final String ignore,
                                                  @PluginElement("StaticField") final StaticField[] staticFields,
+                                                 @PluginElement("Server") final Server[] servers,
+                                                 @PluginElement("FluencyConfig") final FluencyConfig fluencyConfig,
                                                  @PluginElement("Layout") Layout<? extends Serializable> layout,
                                                  @PluginElement("Filter") final Filter filter) {
         final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);
@@ -96,7 +101,25 @@ public final class FluencyAppender extends AbstractAppender {
             fields.put(field.getName(), field.getValue());
         }
 
-        return new FluencyAppender(name, parameters, fields, filter, layout, ignoreExceptions);
+        return new FluencyAppender(name, parameters, fields, servers, fluencyConfig, filter,
+                layout, ignoreExceptions);
+    }
+
+    static Fluency makeFluency(Server[] servers, FluencyConfig config) throws IOException {
+        if (servers.length == 0 && config == null) {
+            return Fluency.defaultFluency();
+        }
+        if (servers.length == 0) {
+            return Fluency.defaultFluency(config.configure());
+        }
+        List<InetSocketAddress> addresses = new ArrayList<>(servers.length);
+        for (Server s : servers) {
+            addresses.add(s.configure());
+        }
+        if (config == null) {
+            return Fluency.defaultFluency(addresses);
+        }
+        return Fluency.defaultFluency(addresses, config.configure());
     }
 
     @Override
