@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1
+
+### Fixes
+
+* fix log messages with exceptions - they were dropped and only the message got logged
+
 ## 1.3.0
 
 ### Features
