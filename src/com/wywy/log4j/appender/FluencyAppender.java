@@ -7,6 +7,7 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.core.pattern.NameAbbreviator;
 import org.apache.logging.log4j.core.util.Booleans;
 import org.apache.logging.log4j.status.StatusLogger;
@@ -90,6 +91,10 @@ public final class FluencyAppender extends AbstractAppender {
             fields.put(field.getName(), field.getValue());
         }
 
+        if (layout == null) {
+            layout = PatternLayout.createDefaultLayout();
+        }
+
         return new FluencyAppender(name, parameters, fields, servers, fluencyConfig, filter,
                 layout, ignoreExceptions);
     }
@@ -127,8 +132,7 @@ public final class FluencyAppender extends AbstractAppender {
     public void append(LogEvent logEvent) {
         String level = logEvent.getLevel().name();
         String loggerName = logEvent.getLoggerName();
-        String message = (this.getLayout() == null) ? logEvent.getMessage().getFormattedMessage() :
-                new String(this.getLayout().toByteArray(logEvent));
+        String message = new String(this.getLayout().toByteArray(logEvent));
         Date eventTime = new Date(logEvent.getTimeMillis());
 
         Map<String, Object> m = new HashMap<>();
