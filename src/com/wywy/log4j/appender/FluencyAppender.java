@@ -132,8 +132,11 @@ public final class FluencyAppender extends AbstractAppender {
     public void append(LogEvent logEvent) {
         String level = logEvent.getLevel().name();
         String loggerName = logEvent.getLoggerName();
+        StringBuilder loggerNameAbbr = new StringBuilder();
         String message = new String(this.getLayout().toByteArray(logEvent));
         Date eventTime = new Date(logEvent.getTimeMillis());
+
+        abbr.abbreviate(loggerName, loggerNameAbbr);
 
         Map<String, Object> m = new HashMap<>();
         m.put("level", level);
@@ -164,7 +167,7 @@ public final class FluencyAppender extends AbstractAppender {
             m.put("sourceLine", logEvent.getSource().getLineNumber());
         }
 
-        m.put("logger", abbr.abbreviate(loggerName));
+        m.put("logger", loggerNameAbbr.toString());
         m.put("loggerFull", loggerName);
         m.put("message", message);
         m.put("thread", logEvent.getThreadName());
