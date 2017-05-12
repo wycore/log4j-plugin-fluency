@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.2
+
+### Fixes
+
+* handle log4j 2.6 signature change - thanks [@askannon](https://github.com/askannon)
+
 ## 1.3.1
 
 ### Fixes
