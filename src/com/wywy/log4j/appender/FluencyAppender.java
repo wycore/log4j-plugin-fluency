@@ -15,6 +15,8 @@ import org.komamitsu.fluency.Fluency;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public final class FluencyAppender extends AbstractAppender {
     private static final StatusLogger LOG = StatusLogger.getLogger();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private final NameAbbreviator abbr = NameAbbreviator.getAbbreviator("1.");
+    private boolean usePre26Abbreviate = false;
+    private Method abbreviateMethod;
 
     private Fluency fluency;
     private Map<String, Object> parameters;
@@ -49,6 +53,20 @@ public final class FluencyAppender extends AbstractAppender {
         } catch (IOException e) {
             LOG.error(e.getMessage());
         }
+        
+        try {
+            abbreviateMethod = NameAbbreviator.class.getMethod("abbreviate", new Class[] { String.class });
+            usePre26Abbreviate = true;
+        } catch (final NoSuchMethodException e) {
+            try {
+                abbreviateMethod = NameAbbreviator.class.getMethod("abbreviate", new Class[] { String.class, StringBuilder.class });
+            } catch (final NoSuchMethodException | SecurityException e1) {
+                LOG.error(e.getMessage(), e);
+            }
+        } catch (final SecurityException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
     }
 
     @PluginFactory
@@ -164,7 +182,18 @@ public final class FluencyAppender extends AbstractAppender {
             m.put("sourceLine", logEvent.getSource().getLineNumber());
         }
 
-        m.put("logger", abbr.abbreviate(loggerName));
+        try {
+            if(usePre26Abbreviate) {
+                m.put("logger", abbreviatePre26(loggerName));
+            } else if(abbreviateMethod != null) {
+                m.put("logger", abbreviate(loggerName));
+            } else {
+                //just a safety net in case abbreviate() changes again in a future API
+                m.put("logger", loggerName);
+            }
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            LOG.error(e.getMessage());
+        }
         m.put("loggerFull", loggerName);
         m.put("message", message);
         m.put("thread", logEvent.getThreadName());
@@ -185,4 +214,32 @@ public final class FluencyAppender extends AbstractAppender {
         }
     }
 
+    /**
+     * Starting with Log4J API 2.6 the abbreviate() method signature changed. This method works with API versions 2.5 or older.
+     * 
+     * @param stringToAbbreviate
+     * @return
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     */
+    private String abbreviatePre26(final String stringToAbbreviate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return (String) abbreviateMethod.invoke(abbr, stringToAbbreviate);
+    }
+    
+    /**
+     * Starting with Log4J API 2.6 the abbreviate() method signature changed. This method works with API versions 2.6 or newer.
+     * 
+     * @param stringToAbbreviate
+     * @return
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     */
+    private String abbreviate(final String stringToAbbreviate) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final StringBuilder logger = new StringBuilder();
+        abbreviateMethod.invoke(abbr, stringToAbbreviate, logger);
+        return logger.toString();
+    }
+    
 }
