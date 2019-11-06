@@ -4,7 +4,7 @@ import org.apache.logging.log4j.core.config.Node;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.komamitsu.fluency.Fluency;
+import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 
 /**
  * Represents Fluency params in the configuration.
@@ -25,15 +25,16 @@ public class FluencyConfig {
     private FluencyConfig() {
     }
 
-    public Fluency.Config configure() {
-        Fluency.Config config = new Fluency.Config().setAckResponseMode(ackResponseMode);
+    public FluencyBuilderForFluentd configure() {
+      FluencyBuilderForFluentd config = new FluencyBuilderForFluentd();
+        config.setAckResponseMode(ackResponseMode);
         if (fileBackupDir != null) config.setFileBackupDir(fileBackupDir);
         if (bufferChunkInitialSize > 0) config.setBufferChunkInitialSize(bufferChunkInitialSize);
         if (bufferChunkRetentionSize > 0) config.setBufferChunkRetentionSize(bufferChunkRetentionSize);
         if (maxBufferSize > 0) config.setMaxBufferSize(maxBufferSize);
         if (waitUntilBufferFlushed > 0) config.setWaitUntilBufferFlushed(waitUntilBufferFlushed);
         if (waitUntilFlusherTerminated > 0) config.setWaitUntilFlusherTerminated(waitUntilFlusherTerminated);
-        if (flushIntervalMillis > 0) config.setFlushIntervalMillis(flushIntervalMillis);
+        if (flushIntervalMillis > 0) config.setFlushAttemptIntervalMillis(flushIntervalMillis);
         if (senderMaxRetryCount > 0) config.setSenderMaxRetryCount(senderMaxRetryCount);
         return config;
     }

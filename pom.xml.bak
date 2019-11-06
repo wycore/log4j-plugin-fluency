@@ -51,18 +51,23 @@
     <dependencies>
         <dependency>
             <groupId>org.komamitsu</groupId>
-            <artifactId>fluency</artifactId>
-            <version>1.1.0</version>
+            <artifactId>fluency-core</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+        <groupId>org.komamitsu</groupId>
+          <artifactId>fluency-fluentd</artifactId>
+          <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.1</version><!-- same version as storm -->
+            <version>2.12.1</version><!-- same version as storm -->
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.1</version>
+            <version>2.12.1</version>
         </dependency>
     </dependencies>
 
