@@ -1,2 +1,8 @@
-target/*
-release/*
+# dot files
+.*
+
+# build dirs
+target/
+release/
+build/
+bin/

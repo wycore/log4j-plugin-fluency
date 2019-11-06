@@ -1,18 +1,5 @@
 package com.wywy.log4j.appender;
 
-
-import org.apache.logging.log4j.core.*;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.plugins.Plugin;
-import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
-import org.apache.logging.log4j.core.config.plugins.PluginElement;
-import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.core.pattern.NameAbbreviator;
-import org.apache.logging.log4j.core.util.Booleans;
-import org.apache.logging.log4j.status.StatusLogger;
-import org.komamitsu.fluency.Fluency;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +11,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginElement;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.core.pattern.NameAbbreviator;
+import org.apache.logging.log4j.core.util.Booleans;
+import org.apache.logging.log4j.status.StatusLogger;
+import org.komamitsu.fluency.Fluency;
+import org.komamitsu.fluency.fluentd.FluencyBuilderForFluentd;
 
 @Plugin(name="Fluency", category="Core", elementType="appender", printObject=true)
 public final class FluencyAppender extends AbstractAppender {
@@ -130,20 +132,22 @@ public final class FluencyAppender extends AbstractAppender {
     //   - Max wait until all buffers are flushed is 60 seconds (by default)
     //   - Max wait until the flusher is terminated is 60 seconds (by default)
     static Fluency makeFluency(Server[] servers, FluencyConfig config) throws IOException {
+      
         if (servers.length == 0 && config == null) {
-            return Fluency.defaultFluency();
+            return new FluencyBuilderForFluentd().build();
         }
         if (servers.length == 0) {
-            return Fluency.defaultFluency(config.configure());
+            return config.configure().build();
         }
         List<InetSocketAddress> addresses = new ArrayList<>(servers.length);
         for (Server s : servers) {
             addresses.add(s.configure());
         }
         if (config == null) {
-            return Fluency.defaultFluency(addresses);
+            return new FluencyBuilderForFluentd().build(addresses);
         }
-        return Fluency.defaultFluency(addresses, config.configure());
+
+        return config.configure().build(addresses);
     }
 
     @Override
@@ -197,6 +201,8 @@ public final class FluencyAppender extends AbstractAppender {
         m.put("loggerFull", loggerName);
         m.put("message", message);
         m.put("thread", logEvent.getThreadName());
+
+        // TODO: lookup for StaticFields
         m.putAll(this.staticFields);
 
         // TODO: get rid of that, once the whole stack supports subsecond timestamps
